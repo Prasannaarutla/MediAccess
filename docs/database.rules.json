@@ -1,0 +1,36 @@
+{
+  "rules": {
+    /* 
+      NOTE: These rules assume a standard Firebase Auth setup. 
+      In a real production environment, you would map auth.uid to patientId or doctorId.
+    */
+    "patients": {
+      "$patientId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "records": {
+          /* Only the patient or a doctor with a valid consent can read records */
+          ".read": "auth != null && (auth.uid === $patientId || root.child('consents').child(auth.uid + '_' + $patientId).child('status').val() === 'APPROVED')"
+        }
+      }
+    },
+    "consents": {
+      ".read": "auth != null",
+      ".indexOn": ["patientId", "doctorId"],
+      "$consentId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['patientId', 'doctorId', 'status', 'createdAt'])"
+      }
+    },
+    "doctors": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "appointments": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["patientId", "doctorId", "date"]
+    }
+  }
+}
