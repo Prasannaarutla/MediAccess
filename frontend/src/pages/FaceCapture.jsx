@@ -128,14 +128,23 @@ export default function FaceCapture() {
 
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-300 rounded-lg">
-            <p className="text-red-700 text-sm">{error}</p>
+            <p className="text-red-700 text-sm mb-2">{error}</p>
+            <button
+              onClick={() => {
+                setError(null)
+                setIsCameraReady(false)
+              }}
+              className="text-xs font-bold text-red-800 underline hover:text-red-900"
+            >
+              🔄 Retry Camera Access
+            </button>
           </div>
         )}
 
         {!capturedImage ? (
           <div className="space-y-4">
             {/* Webcam Feed */}
-            <div className="relative bg-black rounded-lg overflow-hidden">
+            <div className="relative bg-black rounded-lg overflow-hidden min-h-[240px] flex items-center justify-center">
               <Webcam
                 ref={webcamRef}
                 audio={false}
@@ -143,11 +152,9 @@ export default function FaceCapture() {
                 onUserMedia={handleUserMedia}
                 onUserMediaError={handleUserMediaError}
                 videoConstraints={{
-                  facingMode: 'user',
-                  width: { ideal: 400 },
-                  height: { ideal: 400 }
+                  facingMode: 'user'
                 }}
-                className="w-full"
+                className="w-full h-full object-cover"
               />
             </div>
 

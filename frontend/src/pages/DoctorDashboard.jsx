@@ -318,36 +318,46 @@ export default function DoctorDashboard() {
         return
       }
 
-      const s3Key = record.s3Key || record.key; // Support older files if 'key' was previously saved, else strict s3Key
-      
-      if (!s3Key) {
-        alert("Unable to load file. This record was uploaded before secure S3 tracking was implemented. Please re-upload it.")
-        return
-      }
+      const s3Key = record.s3Key || record.key;
 
       const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
-      const response = await fetch(`${BACKEND_URL}/get-view-url`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ s3Key: s3Key }),
-      })
+      try {
+        if (s3Key) {
+          const response = await fetch(`${BACKEND_URL}/get-view-url`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ s3Key: s3Key }),
+          })
 
-      if (!response.ok) throw new Error('Failed to get view URL')
+          if (response.ok) {
+            const data = await response.json()
+            if (data.success && data.viewUrl) {
+              setPreviewRecord({
+                ...record,
+                viewUrl: data.viewUrl
+              })
+              return
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Backend S3 presigned URL fetch failed, trying direct fileUrl fallback:', err)
+      }
 
-      const data = await response.json()
-      if (data.success) {
+      // Fallback to record.fileUrl if S3 presigned fetch failed or s3Key missing
+      if (record.fileUrl) {
         setPreviewRecord({
           ...record,
-          viewUrl: data.viewUrl
+          viewUrl: record.fileUrl
         })
       } else {
-        throw new Error(data.error || 'Server returned failure')
+        alert("Unable to load file preview. Please re-upload the document.")
       }
     } catch (err) {
       console.error('Error viewing record:', err)
-      alert("Unable to load file. Please try again.")
+      alert("Unable to load file: " + err.message)
     }
   }
 
