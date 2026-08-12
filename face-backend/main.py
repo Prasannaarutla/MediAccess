@@ -1,3 +1,10 @@
+import os
+# Limit multi-threading overhead to keep memory footprint under 200MB on Render free tier
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["ONNXRUNTIME_NUM_THREADS"] = "1"
+
 import io
 import cv2
 import numpy as np
@@ -17,13 +24,13 @@ app.add_middleware(
 )
 
 # ─── Load InsightFace Model ───────────────────────────────────────────────────
-# Pre-load lightweight "buffalo_s" model (detection + recognition) at server startup
+# Pre-load lightweight "buffalo_s" model (detection + recognition) with 160x160 det_size
 face_app = FaceAnalysis(
     name="buffalo_s",
     allowed_modules=["detection", "recognition"],
     providers=["CPUExecutionProvider"],
 )
-face_app.prepare(ctx_id=-1, det_size=(256, 256))
+face_app.prepare(ctx_id=-1, det_size=(160, 160))
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
