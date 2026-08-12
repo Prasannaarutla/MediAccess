@@ -142,7 +142,7 @@ export default function ReceptionFaceScan({ onPatientFound, onClose, onShowRegis
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl">
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl max-h-[95vh] overflow-y-auto">
         <div className="mb-5 flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Scan Patient Face</h2>
