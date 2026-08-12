@@ -9,12 +9,18 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim().replace(/\/$/, ""))
   : "*";
 
 app.use(
   cors({
-    origin: allowedOrigins === "*" ? "*" : allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins === "*" || allowedOrigins.includes(origin) || origin.includes("vercel.app") || origin.includes("localhost")) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
