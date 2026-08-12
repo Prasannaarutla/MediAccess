@@ -21,8 +21,9 @@ app.add_middleware(
 )
 
 # ─── Load InsightFace Model ───────────────────────────────────────────────────
-face_app = FaceAnalysis(name="buffalo_l")
-face_app.prepare(ctx_id=0, det_size=(640, 640))
+# Use lightweight "buffalo_s" model & CPU execution to fit under Render 512MB RAM limit
+face_app = FaceAnalysis(name="buffalo_s", providers=["CPUExecutionProvider"])
+face_app.prepare(ctx_id=-1, det_size=(320, 320))
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
