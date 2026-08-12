@@ -80,10 +80,9 @@ function Home() {
               <span className="text-2xl font-extrabold font-heading text-white tracking-wide drop-shadow-md">MediAccess</span>
             </div>
             <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/80">
-              <a href="#" className="relative hover:text-green-400 transition-colors duration-300 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-green-400 after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">Home</a>
-              <a href="#" className="relative hover:text-green-400 transition-colors duration-300 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-green-400 after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">About</a>
-              <a href="#" className="relative hover:text-green-400 transition-colors duration-300 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-green-400 after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">Contact</a>
-              <a href="#" className="relative hover:text-green-400 transition-colors duration-300 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-[2px] after:bg-green-400 after:scale-x-0 hover:after:scale-x-100 after:origin-left after:transition-transform after:duration-300">Login</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="relative hover:text-green-400 transition-colors duration-300">Home</a>
+              <a href="#portals" onClick={(e) => { e.preventDefault(); document.getElementById('portals')?.scrollIntoView({ behavior: 'smooth' }); }} className="relative hover:text-green-400 transition-colors duration-300">Portals</a>
+              <a href="#portals" onClick={(e) => { e.preventDefault(); document.getElementById('portals')?.scrollIntoView({ behavior: 'smooth' }); }} className="relative px-4 py-2 bg-green-500/20 border border-green-400/40 text-green-300 rounded-full hover:bg-green-500/30 transition-colors duration-300">Login</a>
             </nav>
           </div>
         </div>
@@ -125,7 +124,7 @@ function Home() {
         </div>
 
         {/* Portal Cards */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
+        <div id="portals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
           <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {portals.map((p) => {
               const Icon = p.icon
