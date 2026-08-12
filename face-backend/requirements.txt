@@ -1,6 +1,7 @@
 # API and Server
 fastapi>=0.110.0
 uvicorn>=0.30.0
+python-multipart
 
 # Image Processing & Face Recognition
 insightface>=0.7.3
