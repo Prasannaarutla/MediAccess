@@ -1,5 +1,4 @@
 import io
-import os
 import cv2
 import numpy as np
 from fastapi import FastAPI, UploadFile, File, HTTPException
@@ -17,21 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─── Load InsightFace Model (Lazy Loaded) ─────────────────────────────────────
-face_app = None
-
-def get_face_app():
-    global face_app
-    if face_app is None:
-        # Load ONLY detection & recognition modules to stay under 512MB RAM limit
-        app = FaceAnalysis(
-            name="buffalo_s",
-            allowed_modules=["detection", "recognition"],
-            providers=["CPUExecutionProvider"],
-        )
-        app.prepare(ctx_id=-1, det_size=(256, 256))
-        face_app = app
-    return face_app
+# ─── Load InsightFace Model ───────────────────────────────────────────────────
+# Pre-load lightweight "buffalo_s" model (detection + recognition) at server startup
+face_app = FaceAnalysis(
+    name="buffalo_s",
+    allowed_modules=["detection", "recognition"],
+    providers=["CPUExecutionProvider"],
+)
+face_app.prepare(ctx_id=-1, det_size=(256, 256))
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
@@ -54,8 +46,7 @@ async def extract_face(file: UploadFile = File(...)):
         if img is None:
             raise HTTPException(status_code=400, detail="Could not decode image.")
 
-        model = get_face_app()
-        faces = model.get(img)
+        faces = face_app.get(img)
 
         if not faces:
             return {
