@@ -1,7 +1,34 @@
 services:
+  # Python FastAPI Microservice for Facial Recognition
   - type: web
     name: mediaccess-face-backend
     runtime: python
     rootDir: face-backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: "*"
+
+  # Node.js + Express Main Backend for S3 & API orchestration
+  - type: web
+    name: mediaccess-node-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: AWS_REGION
+        value: ap-south-1
+      - key: AWS_BUCKET_NAME
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: "*"

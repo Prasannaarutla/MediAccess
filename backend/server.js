@@ -7,7 +7,17 @@ import multer from "multer";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+  : "*";
+
+app.use(
+  cors({
+    origin: allowedOrigins === "*" ? "*" : allowedOrigins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Configure multer for file uploads
@@ -228,7 +238,7 @@ app.post("/extract-face", upload.single("file"), async (req, res) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Healthcare Backend Server running on http://0.0.0.0:${PORT}`);
-  console.log(`🪣 S3 Bucket: ${process.env.AWS_BUCKET_NAME}`);
-  console.log(`📍 Region: ${process.env.AWS_REGION}`);
+  console.log(`✅ Healthcare Backend Server running on http://localhost:${PORT}`);
+  console.log(`🪣 S3 Bucket: ${process.env.AWS_BUCKET_NAME || 'Not Configured'}`);
+  console.log(`📍 Region: ${process.env.AWS_REGION || 'Not Configured'}`);
 });

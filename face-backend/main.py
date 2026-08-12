@@ -1,4 +1,5 @@
 import io
+import os
 import cv2
 import numpy as np
 from fastapi import FastAPI, UploadFile, File, HTTPException
@@ -8,9 +9,13 @@ from insightface.app import FaceAnalysis
 # ─── App Setup ────────────────────────────────────────────────────────────────
 app = FastAPI(title="MediAccess Face Backend", version="1.0.0")
 
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS", "*")
+origins = [o.strip() for o in allowed_origins_env.split(",")] if allowed_origins_env != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
+    allow_credentials=True if origins != ["*"] else False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
