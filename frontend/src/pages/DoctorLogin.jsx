@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { getData } from '../firebase'
+import { getData, saveData } from '../firebase'
 
 export default function DoctorLogin() {
   const navigate = useNavigate()
@@ -10,6 +10,29 @@ export default function DoctorLogin() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Seed demo doctor account on mount
+  useEffect(() => {
+    const seedDemoDoctor = async () => {
+      try {
+        const doctorId = 'doctor@hospital.com'.replace(/[.#$[\]]/g, '_')
+        const existing = await getData(`doctors/${doctorId}`)
+        if (!existing.success || !existing.data) {
+          await saveData(`doctors/${doctorId}`, {
+            doctorId,
+            name: 'Dr. Sarah Jenkins',
+            email: 'doctor@hospital.com',
+            specialization: 'General Medicine',
+            password: 'doctor123',
+            registeredAt: new Date().toISOString()
+          })
+        }
+      } catch (err) {
+        console.error('Error seeding demo doctor:', err)
+      }
+    }
+    seedDemoDoctor()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -47,7 +70,7 @@ export default function DoctorLogin() {
           setError('Invalid password')
         }
       } else {
-        setError('Doctor not found. Please register first.')
+        setError('Doctor not found. Please register first or use demo credentials.')
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
@@ -60,9 +83,16 @@ export default function DoctorLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Doctor Login</h1>
           <p className="text-gray-500">Access your consultation dashboard</p>
+        </div>
+
+        {/* Demo Account Box */}
+        <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-xs text-emerald-900">
+          <p className="font-bold text-emerald-800 mb-1">🔑 Demo Doctor Credentials:</p>
+          <p><span className="font-semibold">Email:</span> doctor@hospital.com</p>
+          <p><span className="font-semibold">Password:</span> doctor123</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
